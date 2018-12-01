@@ -13,27 +13,45 @@ fn parse_and_apply(l: &String) -> i32{
     0
 }
 
-fn part1(f_lines: BufReader<&File>) {
+fn part1(values: &Vec<i32>) {
     let mut freq :i32 = 0;
-    for line in f_lines.lines() {
-        let l = line.unwrap();
-        freq = freq + parse_and_apply(&l)
+    for val in values {
+        freq = freq + val;
     }
-    println!("Freq = {}", freq);
+    println!("Part1 result = {}", freq);
 }
 
 
-fn part2(f_lines: BufReader<&File>) {
+fn read_file_to_vec(file: BufReader<&File>) -> Vec<i32> {
+    let mut res = Vec::new();
+    for line in file.lines() {
+        let l = line.unwrap();
+        res.push(parse_and_apply(&l));
+    }
+    res
+}
+
+
+fn part2(values : &Vec<i32>) {
     let mut freq_map = HashMap::new();
     let mut freq = 0;
     freq_map.insert(freq, 0);
-    for line in f_lines.lines() {
-        let l = line.unwrap();
-        freq = freq + parse_and_apply(&l)
+    while true {
+        for val in values {
+            freq = freq + val;
+            if freq_map.contains_key(&freq) {
+                println!("Part2 result = {}", freq);
+                return;
+            }
+            freq_map.insert(freq, 0);
+        }
+    }
 }
 
 fn main() {
     let f = File::open("input.txt").expect("file not found");
     let file = BufReader::new(&f);
-    part1(file)
+    let values = read_file_to_vec(file);
+    part1(&values);
+    part2(&values);
 }
